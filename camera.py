@@ -5,7 +5,7 @@ QUALITY = 5
 encode_param = [int(cv2.IMWRITE_WEBP_QUALITY), QUALITY]
 
 # Webカメラの設定情報
-DEVICE_ID = 1
+DEVICE_ID = 0
 
 WIDTH = 480
 HEIGHT = 270
@@ -15,13 +15,12 @@ app = Flask(__name__)
 
 # VideoCapture オブジェクトを取得します
 capture = cv2.VideoCapture(DEVICE_ID)
-print("did it 1")
 # カメラの解像度・FPSの変更
 capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
 capture.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
 capture.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
 capture.set(cv2.CAP_PROP_FPS, FPS)
-print("did it 2")
+
 
 def get_frames():
     while True:
