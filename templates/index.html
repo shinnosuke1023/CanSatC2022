@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>flask streaming</title>
+    </head>
+    <body>
+        <div style="text-align: center;">
+        <img id="screen" src="{{ url_for('video_feed') }}" width="60%" style="
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-touch-callout: none;
+        -moz-user-select: none;
+        touch-callout: none;
+        user-select: none;
+        ">
+        </div>
+        <div style="text-align: center;">
+            <a href="{{ url_for('shutdown') }}">シャットダウン</a>
+        </div>
+    </body>
+</html>
