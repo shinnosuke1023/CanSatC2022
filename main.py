@@ -1,12 +1,12 @@
 from threading import Thread
-import camera
+import web_server
 
 
 mode = 0  # 0=気球搭載モード 1=落下中モード 2=パラシュート切り離しモード 3=走行モード
 
 
 def web_server_boot():
-    thread = Thread(target=camera.web_server_loop)
+    thread = Thread(target=web_server.web_server_loop)
     thread.daemon = True
     thread.start()
 

@@ -1,4 +1,5 @@
 import cv2
+from flask import Flask, Response, render_template, request
 
 QUALITY = 5
 encode_param = [int(cv2.IMWRITE_WEBP_QUALITY), QUALITY]
@@ -9,6 +10,8 @@ DEVICE_ID = 0
 WIDTH = 480
 HEIGHT = 270
 FPS = 30
+
+app = Flask(__name__)
 
 # VideoCapture オブジェクトを取得します
 capture = cv2.VideoCapture(DEVICE_ID)
@@ -28,11 +31,28 @@ def get_frames():
         yield b"--boundary\r\nContent-Type:image/jpeg\r\n\r\n" + jpg_str.tobytes() + b"\r\n\r\n"
 
 
-if __name__ == "__main__":
-    while True:
-        ret, frame = capture.read()
-        cv2.imshow("camera", frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+@app.route("/video_feed")
+def video_feed():
+    return Response(get_frames(), mimetype="multipart/x-mixed-replace; boundary=boundary")
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+
+@app.route("/shutdown", methods=["GET"])
+def shutdown():
+    func = request.environ.get("werkzeug.server.shutdown")
+    if func is None:
+        raise RuntimeError("Not running with the Werkzeug Server")
+    func()
+
+
+def web_server_loop():
+    app.run(host="0.0.0.0", threaded=True, port=8080)
     capture.release()
-    cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    web_server_loop()
