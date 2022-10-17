@@ -4,6 +4,32 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>flask streaming</title>
+        <script>
+            window.addEventListener("load",function(){
+                window.addEventListener('keydown', keyboardDown);
+                window.addEventListener("keyup", keyboardUp);
+            });
+            function keyboardDown(event) {
+            event.preventDefault();
+            var element = document.getElementById("screen");
+            var formData = new FormData();
+            formData.append("keyDown",event.key)
+            fetch("/keyboard_down", {
+                method: "POST",
+                body: formData
+                });
+            };
+            function keyboardUp(event) {
+            event.preventDefault();
+            var element = document.getElementById("screen");
+            var formData = new FormData();
+            formData.append("keyUp",event.key)
+            fetch("/keyboard_up", {
+                method: "POST",
+                body: formData
+                });
+            };
+        </script>
     </head>
     <body>
         <div style="text-align: center;">

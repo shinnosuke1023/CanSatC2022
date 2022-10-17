@@ -36,6 +36,22 @@ def video_feed():
     return Response(get_frames(), mimetype="multipart/x-mixed-replace; boundary=boundary")
 
 
+@app.route("/keyboard_down", methods=["POST"])
+def keyboard_down():
+    key = request.form["keyDown"]
+    key = key.lower()
+    print(key)
+    return ""
+
+
+@app.route("/keyboard_up", methods=["POST"])
+def keyboard_up():
+    key = request.form["keyUp"]
+    key = key.lower()
+    print(key)
+    return ""
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
