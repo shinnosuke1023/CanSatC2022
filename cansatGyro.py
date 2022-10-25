@@ -56,35 +56,35 @@ def getAccel():
     z = read_word_sensor(ACCEL_ZOUT) / 16384.0
     return [x, y, z]
 
+def get_deg():
+    gyro_roll = 0
+    gyro_pitch = 0
+    cansat_roll = 0
+    cansat_pitch = 0
+    pregx = 0
+    pregy = 0
+    while 1:
+        ax, ay, az = getAccel()
+        gx, gy, gz = getGyro()
 
-gyro_roll = 0
-gyro_pitch = 0
-cansat_roll = 0
-cansat_pitch = 0
-pregx = 0
-pregy = 0
-while 1:
-    ax, ay, az = getAccel()
-    gx, gy, gz = getGyro()
+        # print ('{:4.3f},{:4.3f}, {:4.3f}, {:4.3f},{:4.3f}, {:4.3f},' .format(gx, gy, gz, ax, ay, az))
+        if az == 0:
+            continue
+        roll = math.atan(ay / az) * 57.324
+        pitch = math.atan(-ax / math.sqrt(ay * ay + az * az)) * 57.324
 
-    # print ('{:4.3f},{:4.3f}, {:4.3f}, {:4.3f},{:4.3f}, {:4.3f},' .format(gx, gy, gz, ax, ay, az))
-    if az == 0:
-        continue
-    roll = math.atan(ay / az) * 57.324
-    pitch = math.atan(-ax / math.sqrt(ay * ay + az * az)) * 57.324
+        # print ('{:4.3f},{:4.3f}, {:4.3f}, {:4.3f},{:4.3f}, {:4.3f},' .format(gx, gy, gz, ax, ay, az))
+        if az == 0:
+            continue
+        roll = math.atan(ay / az) * 57.324
+        pitch = math.atan(-ax / math.sqrt(ay * ay + az * az)) * 57.324
 
-    # print ('{:4.3f},{:4.3f}, {:4.3f}, {:4.3f},{:4.3f}, {:4.3f},' .format(gx, gy, gz, ax, ay, az))
-    if az == 0:
-        continue
-    roll = math.atan(ay / az) * 57.324
-    pitch = math.atan(-ax / math.sqrt(ay * ay + az * az)) * 57.324
-
-    gyro_roll = cansat_roll + (pregx + gx) * 0.1 / 2
-    gyro_pitch = cansat_pitch + (pregy + gy) * 0.1 / 2
-    cansat_roll = gyro_roll * 0.5 + roll * 0.5
-    cansat_pitch = gyro_pitch * 0.5 + pitch * 0.5
-    print('{:4.3f}, {:4.3f}, {:4.3f}, {:4.3f}, {:4.3f}, {:4.3f}, {:4.3f}'.format(az, pitch, roll, gyro_pitch, gyro_roll,
-                                                                                 cansat_pitch, cansat_roll))
-    pregx = gx
-    pregy = gy
-    sleep(0.1)
+        gyro_roll = cansat_roll + (pregx + gx) * 0.1 / 2
+        gyro_pitch = cansat_pitch + (pregy + gy) * 0.1 / 2
+        cansat_roll = gyro_roll * 0.5 + roll * 0.5
+        cansat_pitch = gyro_pitch * 0.5 + pitch * 0.5
+        # print('{:4.3f}, {:4.3f}, {:4.3f}, {:4.3f}, {:4.3f}, {:4.3f}, {:4.3f}'.format(az, pitch, roll, gyro_pitch, gyro_roll, cansat_pitch, cansat_roll))
+        pregx = gx
+        pregy = gy
+        yield cansat_pitch, cansat_roll
+        sleep(0.1)

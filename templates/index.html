@@ -41,21 +41,21 @@
                 });
             };
             window.onload = function(){
-                var x_deg = document.getElementById("x_deg");
+                var status = document.getElementById("status");
 
                 setInterval(() => {
-                    fetch("{{ url_for('x_deg_feed') }}")
+                    fetch("{{ url_for('status_feed') }}")
                     .then(response => {
-                            response.text().then(x => {x_deg.innerText = x})
+                            response.text().then(st => {status.innerText = st})
                         });
                     }, 1000);
 
-                var y_deg = document.getElementById("y_deg");
+                var deg = document.getElementById("deg");
 
                 setInterval(() => {
-                    fetch("{{ url_for('y_deg_feed') }}")
+                    fetch("{{ url_for('deg_feed') }}")
                     .then(response => {
-                            response.text().then(y => {y_deg.innerText = y})
+                            response.text().then(degree => {deg.innerText = degree})
                         });
                     }, 1000);
 
@@ -86,13 +86,13 @@
                     <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
                     <td style="background-color:#66ffff; height:60px; text-align:center; width:60px"><span style="font-size:36px">&uarr;</span></td>
                     <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
-                    <td style="height:60px; text-align:left; width:360px"><p id="x_deg">x</p></td>
+                    <td style="height:60px; text-align:left; width:360px"><p id="status">status</p></td>
                 </tr>
                 <tr>
                     <td style="background-color:#66ffff; height:60px; text-align:center; width:60px"><span style="font-size:36px">&larr;</span></td>
                     <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
                     <td style="background-color:#66ffff; height:60px; text-align:center; width:60px"><span style="font-size:36px">&rarr;</span></td>
-                    <td style="height:60px; text-align:left; width:360px"><p id="y_deg">y</p></td>
+                    <td style="height:60px; text-align:left; width:360px"><p id="deg">deg</p></td>
                     <td style="background-color:#ff0000; height:60px; text-align:center; " id="jettison"><span style="font-size:36px; color:#ffff00">パラシュート分離</span></td>
                 </tr>
                 <tr>

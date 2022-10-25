@@ -2,8 +2,10 @@ import cv2
 from flask import Flask, Response, render_template, request
 import random
 from time import time, sleep
-#import cansatGPS, cansatGyro, motor
-#import cansatNichrome
+import cansatGPS, cansatGyro, motor
+import cansatNichrome
+
+import cansatGyro
 
 QUALITY = 5
 encode_param = [int(cv2.IMWRITE_WEBP_QUALITY), QUALITY]
@@ -39,26 +41,41 @@ def video_feed():
     return Response(get_frames(), mimetype="multipart/x-mixed-replace; boundary=boundary")
 
 
-@app.route('/x_deg_feed')
-def x_deg_feed():
+@app.route('/status_feed')
+def status_feed():
     def generate():
-        yield "ピッチ角:"+str(random.randrange(0, 90))+"°"
+        yield "test"
+
     return Response(generate(), mimetype='text')
 
 
-@app.route('/y_deg_feed')
-def y_deg_feed():
+@app.route('/deg_feed')
+def deg_feed():
     def generate():
-        yield "ロール角:"+str(random.randrange(0, 90))+"°"
+        gen = cansatGyro.get_deg()
+        x_sum = 0
+        y_sum = 0
+        deg_len = 10
+        for i in range(10):
+            x, y = gen.__next__()
+            x_sum += x
+            y_sum += y
+        x_deg = x_sum / deg_len
+        y_deg = y_sum / deg_len
+        # x_deg = random.randrange(0, 90)
+        # y_deg = random.randrange(0, 90)
+        yield "ピッチ角:" + str(round(x_deg, 2)) + "° ロール角:" + str(round(y_deg, 2)) + "°"
+
     return Response(generate(), mimetype='text')
 
 
 @app.route('/gps_feed')
 def gps_feed():
     def generate():
-        #latitude, longitude = cansatGPS.get_gps()
-        latitude, longitude = (random.randrange(0, 90), random.randrange(0, 90))
-        yield "北緯:"+str(latitude)+"°, 北緯:"+str(longitude)+"°"
+        latitude, longitude = cansatGPS.get_gps()
+        # latitude, longitude = (random.randrange(0, 90), random.randrange(0, 90))
+        yield "北緯:" + str(latitude) + "°, 北緯:" + str(longitude) + "°"
+
     return Response(generate(), mimetype='text')
 
 
@@ -68,16 +85,16 @@ def keyboard_down():
     key = key.lower()
     print(key)
     if key == "w":
-        #motor.forward()
+        motor.forward()
         print("前進")
     if key == "s":
-        #motor.reverse()
+        motor.reverse()
         print("後進")
     if key == "d":
-        #motor.right()
+        motor.right()
         print("右旋回")
     if key == "a":
-        #motor.left()
+        motor.left()
         print("左旋回")
     return ""
 
@@ -87,14 +104,14 @@ def keyboard_up():
     key = request.form["keyUp"]
     key = key.lower()
     print(key)
-    #motor.func_brake()
+    motor.func_brake()
     print("ブレーキ")
     return ""
 
 
 @app.route("/jettison", methods=["POST"])
 def jettison():
-    #cansatNichrome.cutting()
+    cansatNichrome.cutting()
     print("パラシュート分離")
     return ""
 

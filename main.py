@@ -6,6 +6,7 @@ import cansatGPS
 import flightpin
 import motor
 
+# TODO GPSの表示が遅れる問題を解決する（多分1秒ごとにしか関数実行してないから）
 
 mode = 0  # 0=気球搭載モード 1=落下中モード 2=パラシュート切り離しモード 3=走行モード
 
@@ -42,6 +43,13 @@ def running_mode():
     global mode
     motor.GPIO.output(motor.STBY, motor.GPIO.HIGH)
     # モーターを制御、角度を取得
+    while True:
+        try:
+            pass
+        except KeyboardInterrupt:
+            end()
+            exit()
+
 
 
 def end():
