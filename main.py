@@ -1,5 +1,10 @@
 from threading import Thread
 import web_server
+import cansatNichrome
+import cansatGyro
+import cansatGPS
+import flightpin
+import motor
 
 
 mode = 0  # 0=気球搭載モード 1=落下中モード 2=パラシュート切り離しモード 3=走行モード
@@ -14,6 +19,7 @@ def web_server_boot():
 def launching_mode():
     global mode
     # フライトピンの状態を確認
+    flightpin.waiting()
     mode += 1
 
 
@@ -28,12 +34,19 @@ def falling_mode():
 def separating_mode():
     global mode
     # ニクロム線を加熱してテグスを切断する
+    cansatNichrome.cutting()
     mode += 1
 
 
 def running_mode():
     global mode
+    motor.GPIO.output(motor.STBY, motor.GPIO.HIGH)
     # モーターを制御、角度を取得
+
+
+def end():
+    motor.end()
+    exit()
 
 
 def mainloop():

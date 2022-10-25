@@ -8,7 +8,18 @@
             window.addEventListener("load",function(){
                 window.addEventListener('keydown', keyboardDown);
                 window.addEventListener("keyup", keyboardUp);
+                document.getElementById("jettison").addEventListener('mousedown', down);
             });
+            function down(event) {
+                var element = document.getElementById("jettison");
+                var formData = new FormData();
+                formData.append("click", event.button)
+                fetch("/jettison", {
+                    method: 'POST',
+                    body: formData
+                });
+                event.preventDefault();
+            };
             function keyboardDown(event) {
             event.preventDefault();
             var element = document.getElementById("screen");
@@ -29,6 +40,34 @@
                 body: formData
                 });
             };
+            window.onload = function(){
+                var x_deg = document.getElementById("x_deg");
+
+                setInterval(() => {
+                    fetch("{{ url_for('x_deg_feed') }}")
+                    .then(response => {
+                            response.text().then(x => {x_deg.innerText = x})
+                        });
+                    }, 1000);
+
+                var y_deg = document.getElementById("y_deg");
+
+                setInterval(() => {
+                    fetch("{{ url_for('y_deg_feed') }}")
+                    .then(response => {
+                            response.text().then(y => {y_deg.innerText = y})
+                        });
+                    }, 1000);
+
+                var GPS = document.getElementById("gps");
+
+                setInterval(() => {
+                    fetch("{{ url_for('gps_feed') }}")
+                    .then(response => {
+                            response.text().then(gps => {GPS.innerText = gps})
+                        });
+                    }, 1000);
+            }
         </script>
     </head>
     <body>
@@ -41,6 +80,29 @@
         touch-callout: none;
         user-select: none;
         ">
+        <table border="0" cellpadding="0" cellspacing="0" align="center">
+            <tbody>
+                <tr>
+                    <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
+                    <td style="background-color:#66ffff; height:60px; text-align:center; width:60px"><span style="font-size:36px">&uarr;</span></td>
+                    <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
+                    <td style="height:60px; text-align:left; width:360px"><p id="x_deg">x</p></td>
+                </tr>
+                <tr>
+                    <td style="background-color:#66ffff; height:60px; text-align:center; width:60px"><span style="font-size:36px">&larr;</span></td>
+                    <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
+                    <td style="background-color:#66ffff; height:60px; text-align:center; width:60px"><span style="font-size:36px">&rarr;</span></td>
+                    <td style="height:60px; text-align:left; width:360px"><p id="y_deg">y</p></td>
+                    <td style="background-color:#ff0000; height:60px; text-align:center; " id="jettison"><span style="font-size:36px; color:#ffff00">パラシュート分離</span></td>
+                </tr>
+                <tr>
+                    <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
+                    <td style="background-color:#66ffff; height:60px; text-align:center; width:60px"><span style="font-size:36px">&darr;</span></td>
+                    <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
+                    <td style="height:60px; text-align:left; width:360px"><p id="gps">gps</p></td>
+                </tr>
+            </tbody>
+        </table>
         </div>
         <div style="text-align: center;">
             <a href="{{ url_for('shutdown') }}">シャットダウン</a>
