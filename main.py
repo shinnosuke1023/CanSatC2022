@@ -35,7 +35,7 @@ def falling_mode():
 def separating_mode():
     global mode
     # ニクロム線を加熱してテグスを切断する
-    cansatNichrome.cutting()
+    # cansatNichrome.cutting()
     mode += 1
 
 

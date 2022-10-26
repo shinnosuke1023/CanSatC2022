@@ -1,11 +1,11 @@
 import cv2
 from flask import Flask, Response, render_template, request
-import random
-from time import time, sleep
+from threading import Thread
+# import random
+# from time import time, sleep
 import cansatGPS, cansatGyro, motor
 import cansatNichrome
 
-import cansatGyro
 
 QUALITY = 5
 encode_param = [int(cv2.IMWRITE_WEBP_QUALITY), QUALITY]
@@ -26,6 +26,12 @@ capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
 capture.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
 capture.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
 capture.set(cv2.CAP_PROP_FPS, FPS)
+
+
+def gps_reader_boot():
+    gps_thread = Thread(target=cansatGPS.run_gps, args=())
+    gps_thread.daemon = True
+    gps_thread.start()
 
 
 def get_frames():
@@ -72,9 +78,10 @@ def deg_feed():
 @app.route('/gps_feed')
 def gps_feed():
     def generate():
-        latitude, longitude = cansatGPS.get_gps()
+        latitude = cansatGPS.my_gps.latitude[0]
+        longitude = cansatGPS.my_gps.longitude[0]
         # latitude, longitude = (random.randrange(0, 90), random.randrange(0, 90))
-        yield "北緯:" + str(latitude) + "°, 北緯:" + str(longitude) + "°"
+        yield "北緯:" + str(round(latitude, 10)) + "°, 東経:" + str(round(longitude, 10)) + "°"
 
     return Response(generate(), mimetype='text')
 
@@ -130,6 +137,7 @@ def shutdown():
 
 
 def web_server_loop():
+    gps_reader_boot()
     app.run(host="0.0.0.0", threaded=True, port=8080)
     capture.release()
 
