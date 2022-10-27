@@ -34,6 +34,12 @@ def gps_reader_boot():
     gps_thread.start()
 
 
+def deg_reader_boot():
+    deg_thread = Thread(target=cansatGyro.get_deg, args=())
+    deg_thread.daemon = True
+    deg_thread.start()
+
+
 def get_frames():
     while True:
         ret, frame = capture.read()
@@ -58,16 +64,8 @@ def status_feed():
 @app.route('/deg_feed')
 def deg_feed():
     def generate():
-        gen = cansatGyro.get_deg()
-        x_sum = 0
-        y_sum = 0
-        deg_len = 10
-        for i in range(10):
-            x, y = gen.__next__()
-            x_sum += x
-            y_sum += y
-        x_deg = x_sum / deg_len
-        y_deg = y_sum / deg_len
+        x_deg = cansatGyro.cansat_pitch
+        y_deg = cansatGyro.cansat_roll
         # x_deg = random.randrange(0, 90)
         # y_deg = random.randrange(0, 90)
         yield "ピッチ角:" + str(round(x_deg, 2)) + "° ロール角:" + str(round(y_deg, 2)) + "°"
@@ -138,6 +136,7 @@ def shutdown():
 
 def web_server_loop():
     gps_reader_boot()
+    deg_reader_boot()
     app.run(host="0.0.0.0", threaded=True, port=8080)
     capture.release()
 

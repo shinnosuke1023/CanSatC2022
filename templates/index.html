@@ -23,12 +23,14 @@
             function keyboardDown(event) {
             event.preventDefault();
             var element = document.getElementById("screen");
-            var formData = new FormData();
-            formData.append("keyDown",event.key)
-            fetch("/keyboard_down", {
-                method: "POST",
-                body: formData
-                });
+            if(event.repeat == false) {
+                var formData = new FormData();
+                formData.append("keyDown",event.key)
+                fetch("/keyboard_down", {
+                    method: "POST",
+                    body: formData
+                    });
+                };
             };
             function keyboardUp(event) {
             event.preventDefault();
@@ -48,7 +50,7 @@
                     .then(response => {
                             response.text().then(st => {status.innerText = st})
                         });
-                    }, 1000);
+                    }, 10000);
 
                 var deg = document.getElementById("deg");
 

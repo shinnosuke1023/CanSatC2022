@@ -20,6 +20,9 @@ PWR_MGMT_2 = 0x6c
 bus = smbus.SMBus(1)
 bus.write_byte_data(DEV_ADDR, PWR_MGMT_1, 0)
 
+cansat_roll = 0
+cansat_pitch = 0
+
 
 def read_word(adr):
     high = bus.read_byte_data(DEV_ADDR, adr)
@@ -56,7 +59,9 @@ def getAccel():
     z = read_word_sensor(ACCEL_ZOUT) / 16384.0
     return [x, y, z]
 
+
 def get_deg():
+    global cansat_roll, cansat_pitch
     gyro_roll = 0
     gyro_pitch = 0
     cansat_roll = 0
@@ -86,5 +91,5 @@ def get_deg():
         # print('{:4.3f}, {:4.3f}, {:4.3f}, {:4.3f}, {:4.3f}, {:4.3f}, {:4.3f}'.format(az, pitch, roll, gyro_pitch, gyro_roll, cansat_pitch, cansat_roll))
         pregx = gx
         pregy = gy
-        yield cansat_pitch, cansat_roll
+        # yield cansat_pitch, cansat_roll
         sleep(0.1)
