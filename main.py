@@ -1,12 +1,8 @@
 from threading import Thread
-import web_server
-import cansatNichrome
-import cansatGyro
-import cansatGPS
+
 import flightpin
 import motor
-
-# TODO GPSの表示が遅れる問題を解決する（多分1秒ごとにしか関数実行してないから）
+import web_server
 
 mode = 0  # 0=気球搭載モード 1=落下中モード 2=パラシュート切り離しモード 3=走行モード
 
@@ -53,6 +49,7 @@ def running_mode():
 
 def end():
     motor.end()
+    web_server.process.kill()
     exit()
 
 

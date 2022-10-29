@@ -1,31 +1,19 @@
-import cv2
 from flask import Flask, Response, render_template, request
 from threading import Thread
-# import random
-# from time import time, sleep
 import cansatGPS, cansatGyro, motor
 import cansatNichrome
+import subprocess
 
 
-QUALITY = 5
-encode_param = [int(cv2.IMWRITE_WEBP_QUALITY), QUALITY]
-
-# Webカメラの設定情報
-DEVICE_ID = 0
-
-WIDTH = 320
-HEIGHT = 180
+# 画質設定
+QUALITY = 10
+WIDTH = 1280
+HEIGHT = 720
 FPS = 30
 
-app = Flask(__name__)
 
-# VideoCapture オブジェクトを取得します
-capture = cv2.VideoCapture(DEVICE_ID)
-# カメラの解像度・FPSの変更
-capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
-capture.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
-capture.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
-capture.set(cv2.CAP_PROP_FPS, FPS)
+app = Flask(__name__)
+process = None
 
 
 def gps_reader_boot():
@@ -40,17 +28,11 @@ def deg_reader_boot():
     deg_thread.start()
 
 
-def get_frames():
-    while True:
-        ret, frame = capture.read()
-        image = frame
-        ret, jpg_str = cv2.imencode(".jpeg", image, encode_param)
-        yield b"--boundary\r\nContent-Type:image/jpeg\r\n\r\n" + jpg_str.tobytes() + b"\r\n\r\n"
-
-
-@app.route("/video_feed")
-def video_feed():
-    return Response(get_frames(), mimetype="multipart/x-mixed-replace; boundary=boundary")
+def camera_server_boot():
+    global process
+    process = subprocess.Popen("mjpg_streamer -o './output_http.so -w ./www -p 8081' -i './input_raspicam.so -x {0} "
+                               "-y {1} -fps {2} -q {3}'".format(WIDTH, HEIGHT, FPS, QUALITY),
+                               cwd=r"/home/cansat/mjpg-streamer/mjpg-streamer-experimental", shell=True)
 
 
 @app.route('/status_feed')
@@ -137,8 +119,9 @@ def shutdown():
 def web_server_loop():
     gps_reader_boot()
     deg_reader_boot()
+    camera_server_boot()
     app.run(host="0.0.0.0", threaded=True, port=8080)
-    capture.release()
+    process.kill()
 
 
 if __name__ == "__main__":
