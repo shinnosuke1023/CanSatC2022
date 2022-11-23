@@ -9,7 +9,16 @@
                 window.addEventListener('keydown', keyboardDown);
                 window.addEventListener("keyup", keyboardUp);
                 document.getElementById("jettison").addEventListener('mousedown', down);
+                document.getElementById("forward").addEventListener('mousedown', forward);
+                document.getElementById("left").addEventListener('mousedown', left);
+                document.getElementById("right").addEventListener('mousedown', right);
+                document.getElementById("back").addEventListener('mousedown', back);
+                document.getElementById("forward").addEventListener('mouseup', keyboardUp);
+                document.getElementById("left").addEventListener('mouseup', keyboardUp);
+                document.getElementById("right").addEventListener('mouseup', keyboardUp);
+                document.getElementById("back").addEventListener('mouseup', keyboardUp);
             });
+
             function down(event) {
                 var element = document.getElementById("jettison");
                 var formData = new FormData();
@@ -20,18 +29,66 @@
                 });
                 event.preventDefault();
             };
+
+            function forward(event) {
+            event.preventDefault();
+            var element = document.getElementById("foward");
+            var formData = new FormData();
+            formData.append("keyDown","w")
+            fetch("/keyboard_down", {
+                method: "POST",
+                body: formData
+                });
+            };
+
+            function left(event) {
+            event.preventDefault();
+            var element = document.getElementById("left");
+            var formData = new FormData();
+            formData.append("keyDown","a")
+            fetch("/keyboard_down", {
+                method: "POST",
+                body: formData
+                });
+            };
+
+            function right(event) {
+            event.preventDefault();
+            var element = document.getElementById("right");
+            var formData = new FormData();
+            formData.append("keyDown","d")
+            fetch("/keyboard_down", {
+                method: "POST",
+                body: formData
+                });
+            };
+
+            function back(event) {
+            event.preventDefault();
+            var element = document.getElementById("back");
+            var formData = new FormData();
+            formData.append("keyDown","s")
+            fetch("/keyboard_down", {
+                method: "POST",
+                body: formData
+                });
+            };
+
             function keyboardDown(event) {
             event.preventDefault();
             var element = document.getElementById("screen");
-            if(event.repeat == false) {
-                var formData = new FormData();
-                formData.append("keyDown",event.key)
-                fetch("/keyboard_down", {
-                    method: "POST",
-                    body: formData
-                    });
+            if (event.keyCode == 87 || event.keyCode == 65 || event.keyCode == 83 || event.keyCode == 68) {
+                if(event.repeat == false) {
+                    var formData = new FormData();
+                    formData.append("keyDown",event.key)
+                    fetch("/keyboard_down", {
+                        method: "POST",
+                        body: formData
+                        });
+                    };
                 };
             };
+
             function keyboardUp(event) {
             event.preventDefault();
             var element = document.getElementById("screen");
@@ -42,6 +99,7 @@
                 body: formData
                 });
             };
+
             window.onload = function(){
                 var status = document.getElementById("status");
 
@@ -74,37 +132,55 @@
     </head>
     <body>
         <div style="text-align: center;">
-        <img id="screen" src="http://192.168.137.23:8081/?action=stream" width="60%" style="
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -moz-touch-callout: none;
-        -moz-user-select: none;
-        touch-callout: none;
-        user-select: none;
-        ">
-        <table border="0" cellpadding="0" cellspacing="0" align="center">
-            <tbody>
+            <table border="0" cellpadding="0" cellspacing="0" align="center">
+                <tbody>
                 <tr>
-                    <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
-                    <td style="background-color:#66ffff; height:60px; text-align:center; width:60px"><span style="font-size:36px">&uarr;</span></td>
-                    <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
-                    <td style="height:60px; text-align:left; width:360px"><p id="status">status</p></td>
+                    <td>
+                        <img id="screen" src="http://192.168.137.23:8081/?action=stream" width="60%" style="
+                        -webkit-touch-callout: none;
+                        -webkit-user-select: none;
+                        -moz-touch-callout: none;
+                        -moz-user-select: none;
+                        touch-callout: none;
+                        user-select: none;
+                        ">
+                    </td>
+                    <td>
+                        <form name="resolution">
+                            <select name="resolution">
+                                <option value="1280">1280x720</option>
+                                <option value="640">640x480</option>
+                                <option value="480">480x270</option>
+                                <option value="240">240x135</option>
+                            </select>
+                        </form>
+                    </td>
                 </tr>
-                <tr>
-                    <td style="background-color:#66ffff; height:60px; text-align:center; width:60px"><span style="font-size:36px">&larr;</span></td>
-                    <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
-                    <td style="background-color:#66ffff; height:60px; text-align:center; width:60px"><span style="font-size:36px">&rarr;</span></td>
-                    <td style="height:60px; text-align:left; width:360px"><p id="deg">deg</p></td>
-                    <td style="background-color:#ff0000; height:60px; text-align:center; " id="jettison"><span style="font-size:36px; color:#ffff00">パラシュート分離</span></td>
-                </tr>
-                <tr>
-                    <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
-                    <td style="background-color:#66ffff; height:60px; text-align:center; width:60px"><span style="font-size:36px">&darr;</span></td>
-                    <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
-                    <td style="height:60px; text-align:left; width:360px"><p id="gps">gps</p></td>
-                </tr>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+            <table border="0" cellpadding="0" cellspacing="0" align="center">
+                <tbody>
+                    <tr>
+                        <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
+                        <td style="background-color:#66ffff; height:60px; text-align:center; width:60px" id="foward"><span style="font-size:36px">&uarr;</span></td>
+                        <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
+                        <td style="height:60px; text-align:left; width:360px"><p id="status">status</p></td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:#66ffff; height:60px; text-align:center; width:60px" id="left"><span style="font-size:36px">&larr;</span></td>
+                        <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
+                        <td style="background-color:#66ffff; height:60px; text-align:center; width:60px" id="right"><span style="font-size:36px">&rarr;</span></td>
+                        <td style="height:60px; text-align:left; width:360px"><p id="deg">deg</p></td>
+                        <td style="background-color:#ff0000; height:60px; text-align:center; " id="jettison"><span style="font-size:36px; color:#ffff00">パラシュート分離</span></td>
+                    </tr>
+                    <tr>
+                        <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
+                        <td style="background-color:#66ffff; height:60px; text-align:center; width:60px" id="back"><span style="font-size:36px">&darr;</span></td>
+                        <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
+                        <td style="height:60px; text-align:left; width:360px"><p id="gps">gps</p></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         <div style="text-align: center;">
             <a href="{{ url_for('shutdown') }}">シャットダウン</a>
