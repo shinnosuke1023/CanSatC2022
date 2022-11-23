@@ -41,7 +41,8 @@ def running_mode():
     # モーターを制御、角度を取得
     while True:
         try:
-            pass
+            if web_server.deg_thread.is_alive():
+                web_server.deg_reader_boot()
         except KeyboardInterrupt:
             end()
             exit()

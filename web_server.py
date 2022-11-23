@@ -14,6 +14,7 @@ FPS = 30
 
 app = Flask(__name__)
 process = None
+deg_thread = None
 
 
 def gps_reader_boot():
@@ -23,6 +24,7 @@ def gps_reader_boot():
 
 
 def deg_reader_boot():
+    global deg_thread
     deg_thread = Thread(target=cansatGyro.get_deg, args=())
     deg_thread.daemon = True
     deg_thread.start()
