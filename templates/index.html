@@ -136,6 +136,10 @@
                 <tbody>
                 <tr>
                     <td>
+                        <p>スロットル変更</p>
+                        <input type="range" min="0" max="100" step="10" value="80">
+                    </td>
+                    <td>
                         <img id="screen" src="http://192.168.137.23:8081/?action=stream" width="60%" style="
                         -webkit-touch-callout: none;
                         -webkit-user-select: none;
@@ -146,14 +150,16 @@
                         ">
                     </td>
                     <td>
+                        <p>解像度変更</p>
                         <form name="resolution">
                             <select name="resolution">
-                                <option value="1280">1280x720</option>
+                                <option value="1280" selected>1280x720</option>
                                 <option value="640">640x480</option>
                                 <option value="480">480x270</option>
                                 <option value="240">240x135</option>
                             </select>
                         </form>
+                        <input type="button" value="解像度変更" onclick="resolution()"/>
                     </td>
                 </tr>
                 </tbody>
