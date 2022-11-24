@@ -105,6 +105,17 @@ def jettison():
     return ""
 
 
+@app.route("/change_resolution", methods=["POST"])
+def change_resolution():
+    global process, WIDTH, HEIGHT
+    resolution = request.form["resolution"]
+    process.kill()
+    width, height = resolution.split("x")
+    WIDTH = int(width)
+    HEIGHT = int(height)
+    camera_server_boot()
+
+
 @app.route("/")
 def index():
     return render_template("index.html")

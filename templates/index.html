@@ -9,10 +9,10 @@
                 window.addEventListener('keydown', keyboardDown);
                 window.addEventListener("keyup", keyboardUp);
                 document.getElementById("jettison").addEventListener('mousedown', down);
-                document.getElementById("forward").addEventListener('mousedown', forward);
-                document.getElementById("left").addEventListener('mousedown', left);
-                document.getElementById("right").addEventListener('mousedown', right);
-                document.getElementById("back").addEventListener('mousedown', back);
+                document.getElementById("forward").addEventListener('mousedown', forwardMove);
+                document.getElementById("left").addEventListener('mousedown', leftMove);
+                document.getElementById("right").addEventListener('mousedown', rightMove);
+                document.getElementById("back").addEventListener('mousedown', backMove);
                 document.getElementById("forward").addEventListener('mouseup', keyboardUp);
                 document.getElementById("left").addEventListener('mouseup', keyboardUp);
                 document.getElementById("right").addEventListener('mouseup', keyboardUp);
@@ -30,7 +30,7 @@
                 event.preventDefault();
             };
 
-            function forward(event) {
+            function forwardMove(event) {
             event.preventDefault();
             var element = document.getElementById("foward");
             var formData = new FormData();
@@ -41,7 +41,7 @@
                 });
             };
 
-            function left(event) {
+            function leftMove(event) {
             event.preventDefault();
             var element = document.getElementById("left");
             var formData = new FormData();
@@ -52,7 +52,7 @@
                 });
             };
 
-            function right(event) {
+            function rightMove(event) {
             event.preventDefault();
             var element = document.getElementById("right");
             var formData = new FormData();
@@ -63,7 +63,7 @@
                 });
             };
 
-            function back(event) {
+            function backMove(event) {
             event.preventDefault();
             var element = document.getElementById("back");
             var formData = new FormData();
@@ -98,6 +98,16 @@
                 method: "POST",
                 body: formData
                 });
+            };
+
+            function resolutionChange(){
+                const resolution = document.resolution.resolution;
+
+                const num = resolution.selectedIndex;
+
+                const str =  resolution.options[num].value;
+
+                document.getElementById("selectedResolution").textContent = str;
             };
 
             window.onload = function(){
@@ -136,7 +146,7 @@
                 <tbody>
                 <tr>
                     <td>
-                        <p>スロットル変更</p>
+                        <p>duty比変更</p>
                         <input type="range" min="0" max="100" step="10" value="80">
                     </td>
                     <td>
@@ -151,15 +161,16 @@
                     </td>
                     <td>
                         <p>解像度変更</p>
+                        <span id="selectedResolution"></span>
                         <form name="resolution">
                             <select name="resolution">
-                                <option value="1280" selected>1280x720</option>
-                                <option value="640">640x480</option>
-                                <option value="480">480x270</option>
-                                <option value="240">240x135</option>
+                                <option value="1280x720" selected>1280x720</option>
+                                <option value="640x480">640x480</option>
+                                <option value="480x270">480x270</option>
+                                <option value="240x135">240x135</option>
                             </select>
                         </form>
-                        <input type="button" value="解像度変更" onclick="resolution()"/>
+                        <input type="button" value="解像度変更" onclick="resolutionChange()"/>
                     </td>
                 </tr>
                 </tbody>
@@ -168,7 +179,7 @@
                 <tbody>
                     <tr>
                         <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
-                        <td style="background-color:#66ffff; height:60px; text-align:center; width:60px" id="foward"><span style="font-size:36px">&uarr;</span></td>
+                        <td style="background-color:#66ffff; height:60px; text-align:center; width:60px" id="forward"><span style="font-size:36px">&uarr;</span></td>
                         <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
                         <td style="height:60px; text-align:left; width:360px"><p id="status">status</p></td>
                     </tr>
