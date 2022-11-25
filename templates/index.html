@@ -107,10 +107,36 @@
 
                 const str =  resolution.options[num].value;
 
-                document.getElementById("selectedResolution").textContent = str;
+                var formData = new FormData();
+                formData.append("keyUp",str)
+                fetch("/change_resolution", {
+                    method: "POST",
+                    body: formData
+                    });
+            };
+
+            const inputElem = document.getElementById("dutyRate");
+            const currentValueElem = document.getElementById("currentDutyRate");
+
+            const setCurrentValue = (val) => {
+                currentValueElem.innerText = val;
+            };
+
+            const rangeOnChange = (e) => {
+                setCurrentValue(e.target.value);
+                var formData = new FormData();
+                formData.append("dutyRate",e.target.value)
+                fetch("/change_duty_rate", {
+                    method: "POST",
+                    body: formData
+                    });
             };
 
             window.onload = function(){
+
+                inputElem.addEventListener("input", rangeOnChange);
+                setCurrentValue(inputElem.value);
+
                 var status = document.getElementById("status");
 
                 setInterval(() => {
@@ -147,7 +173,8 @@
                 <tr>
                     <td>
                         <p>duty比変更</p>
-                        <input type="range" min="0" max="100" step="10" value="80">
+                        <span id="currentDutyRate"></span>
+                        <input type="range" id="dutyRate" min="0" max="100" step="10" value="80">
                     </td>
                     <td>
                         <img id="screen" src="http://192.168.137.23:8081/?action=stream" width="60%" style="
@@ -161,7 +188,7 @@
                     </td>
                     <td>
                         <p>解像度変更</p>
-                        <span id="selectedResolution"></span>
+                        <span id="selectedResolution">{{ currentResolution }}</span>
                         <form name="resolution">
                             <select name="resolution">
                                 <option value="1280x720" selected>1280x720</option>

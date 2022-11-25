@@ -116,9 +116,15 @@ def change_resolution():
     camera_server_boot()
 
 
+@app.route("/change_duty_rate", methods=["POST"])
+def change_duty_rate():
+    rate = request.form["dutyRate"]
+    motor.val = int(rate)
+
+
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", currentResolution=f"{WIDTH}x{HEIGHT}")
 
 
 @app.route("/shutdown", methods=["GET"])
