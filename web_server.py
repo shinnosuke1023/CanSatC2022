@@ -3,6 +3,7 @@ from threading import Thread
 import cansatGPS, cansatGyro, motor
 import cansatNichrome
 import subprocess
+from time import sleep
 
 
 # 画質設定
@@ -30,10 +31,10 @@ def deg_reader_boot():
     deg_thread.start()
 
 
-def camera_server_boot():
+def camera_server_boot(width, height, fps, quality):
     global process
-    process = subprocess.Popen("mjpg_streamer -o './output_http.so -w ./www -p 8081' -i './input_raspicam.so -x {0} "
-                               "-y {1} -fps {2} -q {3}'".format(WIDTH, HEIGHT, FPS, QUALITY),
+    process = subprocess.Popen("exec mjpg_streamer -o './output_http.so -w ./www -p 8081' -i './input_raspicam.so -x {0} "
+                               "-y {1} -fps {2} -q {3}'".format(width, height, fps, quality),
                                cwd=r"/home/cansat/mjpg-streamer/mjpg-streamer-experimental", shell=True)
 
 
@@ -88,6 +89,31 @@ def keyboard_down():
     return ""
 
 
+@app.route("/small_down", methods=["POST"])
+def small_down():
+    key = request.form["keyDown"]
+    timeout = float(request.form["timeout"])
+    key = key.lower()
+    print(key)
+    print(timeout)
+    if key == "w":
+        motor.forward()
+        print("前進")
+    if key == "s":
+        motor.reverse()
+        print("後進")
+    if key == "d":
+        motor.right()
+        print("右旋回")
+    if key == "a":
+        motor.left()
+        print("左旋回")
+    sleep(timeout)
+    motor.func_brake()
+    print("ブレーキ")
+    return ""
+
+
 @app.route("/keyboard_up", methods=["POST"])
 def keyboard_up():
     key = request.form["keyUp"]
@@ -109,17 +135,25 @@ def jettison():
 def change_resolution():
     global process, WIDTH, HEIGHT
     resolution = request.form["resolution"]
+    print(resolution)
     process.kill()
     width, height = resolution.split("x")
+    print(width, height)
     WIDTH = int(width)
     HEIGHT = int(height)
-    camera_server_boot()
+    print(WIDTH, HEIGHT)
+    camera_server_boot(WIDTH, HEIGHT, FPS, QUALITY)
+    return ""
 
 
 @app.route("/change_duty_rate", methods=["POST"])
 def change_duty_rate():
     rate = request.form["dutyRate"]
+    print(rate)
     motor.val = int(rate)
+    motor.p_a.ChangeDutyCycle(motor.val)
+    motor.p_b.ChangeDutyCycle(motor.val)
+    return ""
 
 
 @app.route("/")
@@ -138,7 +172,7 @@ def shutdown():
 def web_server_loop():
     gps_reader_boot()
     deg_reader_boot()
-    camera_server_boot()
+    camera_server_boot(WIDTH, HEIGHT, FPS, QUALITY)
     app.run(host="0.0.0.0", threaded=True, port=8080)
     process.kill()
 

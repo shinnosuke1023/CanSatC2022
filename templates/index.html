@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>flask streaming</title>
+        <title>CanSat</title>
         <script>
             window.addEventListener("load",function(){
                 window.addEventListener('keydown', keyboardDown);
@@ -17,7 +17,85 @@
                 document.getElementById("left").addEventListener('mouseup', keyboardUp);
                 document.getElementById("right").addEventListener('mouseup', keyboardUp);
                 document.getElementById("back").addEventListener('mouseup', keyboardUp);
+                document.getElementById("smallForward").addEventListener('mousedown', smallForwardMove);
+                document.getElementById("smallLeft").addEventListener('mousedown', smallLeftMove);
+                document.getElementById("smallRight").addEventListener('mousedown', smallRightMove);
+                document.getElementById("smallBack").addEventListener('mousedown', smallBackMove);
+                document.getElementById("left90").addEventListener('mousedown', left90Move);
+                document.getElementById("right90").addEventListener('mousedown', right90Move);
             });
+
+            function smallForwardMove(event) {
+                event.preventDefault();
+                var element = document.getElementById("foward");
+                var formData = new FormData();
+                formData.append("keyDown", "w");
+                formData.append("timeout", "5");
+                fetch("/small_down", {
+                    method: "POST",
+                    body: formData
+                    });
+            };
+
+            function smallLeftMove(event) {
+                event.preventDefault();
+                var element = document.getElementById("foward");
+                var formData = new FormData();
+                formData.append("keyDown", "a");
+                formData.append("timeout", "0.1");
+                fetch("/small_down", {
+                    method: "POST",
+                    body: formData
+                    });
+            };
+
+            function smallRightMove(event) {
+                event.preventDefault();
+                var element = document.getElementById("foward");
+                var formData = new FormData();
+                formData.append("keyDown", "d");
+                formData.append("timeout", "0.1");
+                fetch("/small_down", {
+                    method: "POST",
+                    body: formData
+                    });
+            };
+
+            function smallBackMove(event) {
+                event.preventDefault();
+                var element = document.getElementById("foward");
+                var formData = new FormData();
+                formData.append("keyDown", "w");
+                formData.append("timeout", "5");
+                fetch("/small_down", {
+                    method: "POST",
+                    body: formData
+                    });
+            };
+
+            function left90Move(event) {
+                event.preventDefault();
+                var element = document.getElementById("foward");
+                var formData = new FormData();
+                formData.append("keyDown", "a");
+                formData.append("timeout", "1");
+                fetch("/small_down", {
+                    method: "POST",
+                    body: formData
+                    });
+            };
+
+            function right90Move(event) {
+                event.preventDefault();
+                var element = document.getElementById("foward");
+                var formData = new FormData();
+                formData.append("keyDown", "d");
+                formData.append("timeout", "1");
+                fetch("/small_down", {
+                    method: "POST",
+                    body: formData
+                    });
+            };
 
             function down(event) {
                 var element = document.getElementById("jettison");
@@ -108,32 +186,35 @@
                 const str =  resolution.options[num].value;
 
                 var formData = new FormData();
-                formData.append("keyUp",str)
+                formData.append("resolution",str)
                 fetch("/change_resolution", {
                     method: "POST",
                     body: formData
                     });
+                setTimeout(doReload, 5000);
             };
 
-            const inputElem = document.getElementById("dutyRate");
-            const currentValueElem = document.getElementById("currentDutyRate");
-
-            const setCurrentValue = (val) => {
-                currentValueElem.innerText = val;
-            };
-
-            const rangeOnChange = (e) => {
-                setCurrentValue(e.target.value);
-                var formData = new FormData();
-                formData.append("dutyRate",e.target.value)
-                fetch("/change_duty_rate", {
-                    method: "POST",
-                    body: formData
-                    });
-            };
+            function doReload() {
+                window.location.reload();
+            }
 
             window.onload = function(){
+                const currentValueElem = document.getElementById("currentDutyRate");
+                const inputElem = document.getElementById("dutyRate");
 
+                const setCurrentValue = (val) => {
+                    currentValueElem.innerText = val;
+                };
+
+                const rangeOnChange = (e) => {
+                    setCurrentValue(e.target.value);
+                    var formData = new FormData();
+                    formData.append("dutyRate", inputElem.value)
+                    fetch("/change_duty_rate", {
+                        method: "POST",
+                        body: formData
+                        });
+                };
                 inputElem.addEventListener("input", rangeOnChange);
                 setCurrentValue(inputElem.value);
 
@@ -173,10 +254,11 @@
                 <tr>
                     <td>
                         <p>duty比変更</p>
-                        <span id="currentDutyRate"></span>
+                        <span id="currentDutyRate">80</span>
+                        <br>
                         <input type="range" id="dutyRate" min="0" max="100" step="10" value="80">
                     </td>
-                    <td>
+                    <td style="width:1270px">
                         <img id="screen" src="http://192.168.137.23:8081/?action=stream" width="60%" style="
                         -webkit-touch-callout: none;
                         -webkit-user-select: none;
@@ -209,6 +291,11 @@
                         <td style="background-color:#66ffff; height:60px; text-align:center; width:60px" id="forward"><span style="font-size:36px">&uarr;</span></td>
                         <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
                         <td style="height:60px; text-align:left; width:360px"><p id="status">status</p></td>
+                        <td></td>
+                        <td></td>
+                        <td style="background-color:#ffff66; height:60px; text-align:center; width:60px" id="smallLeft"><span style="font-size:36px">↖</span></td>
+                        <td style="background-color:#ffff66; height:60px; text-align:center; width:60px" id="smallForward"><span style="font-size:36px">&uarr;</span></td>
+                        <td style="background-color:#ffff66; height:60px; text-align:center; width:60px" id="smallRight"><span style="font-size:36px">↗</span></td>
                     </tr>
                     <tr>
                         <td style="background-color:#66ffff; height:60px; text-align:center; width:60px" id="left"><span style="font-size:36px">&larr;</span></td>
@@ -216,12 +303,21 @@
                         <td style="background-color:#66ffff; height:60px; text-align:center; width:60px" id="right"><span style="font-size:36px">&rarr;</span></td>
                         <td style="height:60px; text-align:left; width:360px"><p id="deg">deg</p></td>
                         <td style="background-color:#ff0000; height:60px; text-align:center; " id="jettison"><span style="font-size:36px; color:#ffff00">パラシュート分離</span></td>
+                        <td style="height:60px; text-align:center; width:60px"></td>
+                        <td style="background-color:#ffff66; height:60px; text-align:center; width:60px" id="left90"><span style="font-size:36px">&larr;</span></td>
+                        <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
+                        <td style="background-color:#ffff66; height:60px; text-align:center; width:60px" id="right90"><span style="font-size:36px">&rarr;</span></td>
                     </tr>
                     <tr>
                         <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
                         <td style="background-color:#66ffff; height:60px; text-align:center; width:60px" id="back"><span style="font-size:36px">&darr;</span></td>
                         <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
                         <td style="height:60px; text-align:left; width:360px"><p id="gps">gps</p></td>
+                        <td></td>
+                        <td></td>
+                        <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
+                        <td style="background-color:#ffff66; height:60px; text-align:center; width:60px" id="smallBack"><span style="font-size:36px">&darr;</span></td>
+                        <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
                     </tr>
                 </tbody>
             </table>
