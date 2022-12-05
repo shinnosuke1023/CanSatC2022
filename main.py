@@ -3,20 +3,30 @@ from threading import Thread
 import flightpin
 import motor
 import web_server
+import cansatNichrome
+from time import sleep
 
 mode = 0  # 0=気球搭載モード 1=落下中モード 2=パラシュート切り離しモード 3=走行モード
 
 
 def web_server_boot():
-    thread = Thread(target=web_server.web_server_loop)
-    thread.daemon = True
-    thread.start()
+    web_thread = Thread(target=web_server.web_server_loop)
+    web_thread.daemon = True
+    web_thread.start()
+
+
+def auto_jettison():
+    sleep(60)
+    cansatNichrome.cutting()
 
 
 def launching_mode():
     global mode
     # フライトピンの状態を確認
-    flightpin.waiting()
+    flightpin.waiting()  # フライトピンが抜けるまでここでブロッキング
+    jettison_thread = Thread(target=auto_jettison)
+    jettison_thread.daemon = True
+    jettison_thread.start()
     mode += 1
 
 
@@ -24,7 +34,6 @@ def falling_mode():
     global mode
     web_server_boot()
     # カメラ起動
-    # 加速度を取得して落下検知（webからの応答を得る）角度もいっとくか？
     mode += 1
 
 

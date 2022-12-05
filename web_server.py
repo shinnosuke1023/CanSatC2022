@@ -64,7 +64,7 @@ def gps_feed():
         latitude = cansatGPS.my_gps.latitude[0]
         longitude = cansatGPS.my_gps.longitude[0]
         # latitude, longitude = (random.randrange(0, 90), random.randrange(0, 90))
-        yield "北緯:" + str(round(latitude, 10)) + "°, 東経:" + str(round(longitude, 10)) + "°"
+        yield "N:" + str(round(latitude, 7)) + "°, E:" + str(round(longitude, 7)) + "°"
 
     return Response(generate(), mimetype='text')
 
