@@ -10,6 +10,7 @@ from time import sleep
 QUALITY = 10
 WIDTH = 1280
 HEIGHT = 720
+HEIGHT = 720
 FPS = 30
 
 
@@ -33,8 +34,8 @@ def deg_reader_boot():
 
 def camera_server_boot(width, height, fps, quality):
     global process
-    process = subprocess.Popen("exec mjpg_streamer -o './output_http.so -w ./www -p 8081' -i './input_raspicam.so -x {0} "
-                               "-y {1} -fps {2} -q {3}'".format(width, height, fps, quality),
+    process = subprocess.Popen("exec mjpg_streamer -o './output_http.so -w ./www -p 8081' -i './input_raspicam.so "
+                               "-x {0} -y {1} -fps {2} -q {3}'".format(width, height, fps, quality),
                                cwd=r"/home/cansat/mjpg-streamer/mjpg-streamer-experimental", shell=True)
 
 

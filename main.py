@@ -16,24 +16,23 @@ def web_server_boot():
 
 
 def auto_jettison():
-    sleep(60)
+    sleep(30)
     cansatNichrome.cutting()
 
 
 def launching_mode():
     global mode
-    # フライトピンの状態を確認
     flightpin.waiting()  # フライトピンが抜けるまでここでブロッキング
-    jettison_thread = Thread(target=auto_jettison)
-    jettison_thread.daemon = True
-    jettison_thread.start()
+    # フライトピンの状態を確認
     mode += 1
 
 
 def falling_mode():
     global mode
     web_server_boot()
-    # カメラ起動
+    jettison_thread = Thread(target=auto_jettison)
+    jettison_thread.daemon = True
+    jettison_thread.start()
     mode += 1
 
 
@@ -50,11 +49,13 @@ def running_mode():
     # モーターを制御、角度を取得
     while True:
         try:
-            if web_server.deg_thread.is_alive():
+            if not web_server.deg_thread.is_alive():  # not忘れたら死ぬぞ!!!!!
                 web_server.deg_reader_boot()
         except KeyboardInterrupt:
             end()
             exit()
+        except Exception as e:
+            print(e)
 
 
 def end():
