@@ -194,6 +194,22 @@
                 setTimeout(doReload, 3000);
             };
 
+            function fpsChange(){
+                const fps = document.fps.fps;
+
+                const num = fps.selectedIndex;
+
+                const str =  fps.options[num].value;
+
+                var formData = new FormData();
+                formData.append("fps",str)
+                fetch("/change_fps", {
+                    method: "POST",
+                    body: formData
+                    });
+                setTimeout(doReload, 3000);
+            };
+
             function doReload() {
                 window.location.reload();
             }
@@ -228,20 +244,16 @@
                     }, 10000);
 
                 var deg = document.getElementById("deg");
-
-                setInterval(() => {
-                    fetch("{{ url_for('deg_feed') }}")
-                    .then(response => {
-                            response.text().then(degree => {deg.innerText = degree})
-                        });
-                    }, 1000);
-
                 var GPS = document.getElementById("gps");
 
                 setInterval(() => {
-                    fetch("{{ url_for('gps_feed') }}")
+                    fetch("{{ url_for('data_feed') }}")
                     .then(response => {
-                            response.text().then(gps => {GPS.innerText = gps})
+                            response.text().then(textData => {
+                                var datas = textData.split("\n");
+                                deg.innerText = datas[0];
+                                GPS.innerText = datas[1];
+                                })
                         });
                     }, 1000);
             }
@@ -280,6 +292,19 @@
                             </select>
                         </form>
                         <input type="button" value="解像度変更" onclick="resolutionChange()"/>
+                        <br>
+                        <p>フレームレート変更</p>
+                        <span id="selectedFPS">{{ currentFPS }}</span>
+                        <form name="fps">
+                            <select name="fps">
+                                <option value="30" selected>30fps</option>
+                                <option value="20">20fps</option>
+                                <option value="15">15fps</option>
+                                <option value="10">10fps</option>
+                                <option value="5">5fps</option>
+                            </select>
+                        </form>
+                        <input type="button" value="フレームレート変更" onclick="fpsChange()"/>
                     </td>
                 </tr>
                 </tbody>
@@ -290,7 +315,7 @@
                         <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
                         <td style="background-color:#66ffff; height:60px; text-align:center; width:60px" id="forward"><span style="font-size:36px">&uarr;</span></td>
                         <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
-                        <td style="height:60px; text-align:left; width:360px"><p id="status">status</p></td>
+                        <td style="height:60px; text-align:left; width:420px"><p id="status">status</p></td>
                         <td></td>
                         <td></td>
                         <td style="background-color:#ffff66; height:60px; text-align:center; width:60px" id="smallLeft"><span style="font-size:36px">↖</span></td>
@@ -301,7 +326,7 @@
                         <td style="background-color:#66ffff; height:60px; text-align:center; width:60px" id="left"><span style="font-size:36px">&larr;</span></td>
                         <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
                         <td style="background-color:#66ffff; height:60px; text-align:center; width:60px" id="right"><span style="font-size:36px">&rarr;</span></td>
-                        <td style="height:60px; text-align:left; width:360px"><p id="deg">deg</p></td>
+                        <td style="height:60px; text-align:left; width:420px"><p id="deg">deg</p></td>
                         <td style="background-color:#ff0000; height:60px; text-align:center; " id="jettison"><span style="font-size:36px; color:#ffff00">パラシュート分離</span></td>
                         <td style="height:60px; text-align:center; width:60px"></td>
                         <td style="background-color:#ffff66; height:60px; text-align:center; width:60px" id="left90"><span style="font-size:36px">&larr;</span></td>
@@ -312,7 +337,7 @@
                         <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
                         <td style="background-color:#66ffff; height:60px; text-align:center; width:60px" id="back"><span style="font-size:36px">&darr;</span></td>
                         <td style="height:60px; text-align:center; width:60px">&nbsp;</td>
-                        <td style="height:60px; text-align:left; width:360px"><p id="gps">gps</p></td>
+                        <td style="height:60px; text-align:left; width:420px"><p id="gps">gps</p></td>
                         <td></td>
                         <td></td>
                         <td style="height:60px; text-align:center; width:60px">&nbsp;</td>

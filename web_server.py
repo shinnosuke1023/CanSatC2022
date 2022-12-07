@@ -17,6 +17,7 @@ FPS = 30
 app = Flask(__name__)
 process = None
 deg_thread = None
+cansat_status = "launching mode"
 
 
 def gps_reader_boot():
@@ -42,30 +43,20 @@ def camera_server_boot(width, height, fps, quality):
 @app.route('/status_feed')
 def status_feed():
     def generate():
-        yield "test"
+        yield cansat_status
 
     return Response(generate(), mimetype='text')
 
 
-@app.route('/deg_feed')
-def deg_feed():
+@app.route('/data_feed')
+def data_feed():
     def generate():
         x_deg = cansatGyro.cansat_pitch
         y_deg = cansatGyro.cansat_roll
-        # x_deg = random.randrange(0, 90)
-        # y_deg = random.randrange(0, 90)
-        yield "ピッチ角:" + str(round(x_deg, 2)) + "° ロール角:" + str(round(y_deg, 2)) + "°"
-
-    return Response(generate(), mimetype='text')
-
-
-@app.route('/gps_feed')
-def gps_feed():
-    def generate():
         latitude = cansatGPS.my_gps.latitude[0]
         longitude = cansatGPS.my_gps.longitude[0]
-        # latitude, longitude = (random.randrange(0, 90), random.randrange(0, 90))
-        yield "N:" + str(round(latitude, 7)) + "°, E:" + str(round(longitude, 7)) + "°"
+        yield "ピッチ角:" + str(round(x_deg, 2)) + "° ロール角:" + str(round(y_deg, 2)) + "°\n"\
+              "N:" + str(round(latitude, 7)) + "°, E:" + str(round(longitude, 7)) + "°"
 
     return Response(generate(), mimetype='text')
 
@@ -147,6 +138,17 @@ def change_resolution():
     return ""
 
 
+@app.route("/change_fps", methods=["POST"])
+def change_fps():
+    global process, FPS
+    fps = request.form["fps"]
+    print(fps)
+    process.kill()
+    FPS = int(fps)
+    camera_server_boot(WIDTH, HEIGHT, FPS, QUALITY)
+    return ""
+
+
 @app.route("/change_duty_rate", methods=["POST"])
 def change_duty_rate():
     rate = request.form["dutyRate"]
@@ -159,7 +161,7 @@ def change_duty_rate():
 
 @app.route("/")
 def index():
-    return render_template("index.html", currentResolution=f"{WIDTH}x{HEIGHT}")
+    return render_template("index.html", currentResolution=f"{WIDTH}x{HEIGHT}", currentFPS=f"{FPS}fps")
 
 
 @app.route("/shutdown", methods=["GET"])

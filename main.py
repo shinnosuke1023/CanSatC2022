@@ -29,6 +29,7 @@ def launching_mode():
 
 def falling_mode():
     global mode
+    web_server.cansat_status = "falling mode"
     web_server_boot()
     jettison_thread = Thread(target=auto_jettison)
     jettison_thread.daemon = True
@@ -45,6 +46,7 @@ def separating_mode():
 
 def running_mode():
     global mode
+    web_server.cansat_status = "running mode"
     motor.GPIO.output(motor.STBY, motor.GPIO.HIGH)
     # モーターを制御、角度を取得
     while True:
