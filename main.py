@@ -16,7 +16,7 @@ def web_server_boot():
 
 
 def auto_jettison():
-    sleep(30)
+    sleep(40)
     cansatNichrome.cutting()
 
 
