@@ -4,20 +4,21 @@ import cansatGPS, cansatGyro, motor
 import cansatNichrome
 import subprocess
 from time import sleep
+import urllib
 
 
 # 画質設定
 QUALITY = 10
-WIDTH = 1280
-HEIGHT = 720
-HEIGHT = 720
-FPS = 30
+WIDTH = 240
+HEIGHT = 135
+FPS = 15
 
 
 app = Flask(__name__)
 process = None
 deg_thread = None
 cansat_status = "launching mode"
+image_num = 0
 
 
 def gps_reader_boot():
@@ -157,6 +158,22 @@ def change_duty_rate():
     motor.p_a.ChangeDutyCycle(motor.val)
     motor.p_b.ChangeDutyCycle(motor.val)
     return ""
+
+
+@app.route("/save_image", methods=["POST"])
+def save_image():
+    global image_num
+    latitude = cansatGPS.my_gps.latitude[0]
+    longitude = cansatGPS.my_gps.longitude[0]
+    path = f"./static/{image_num}_N{round(latitude, 7)}_E{round(longitude, 7)}"
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:8081/?action=snapshot") as web_file:
+            image = web_file.read()
+            with open(path, "wb") as local_image:
+                local_image.write(image)
+    except urllib.error.URLError as e:
+        print(e)
+    image_num += 1
 
 
 @app.route("/")

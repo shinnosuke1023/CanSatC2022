@@ -214,6 +214,14 @@
                 window.location.reload();
             }
 
+            function imageSave(){
+                var formData = new FormData();
+                fetch("/save_image", {
+                    method: "POST",
+                    body: formData
+                    });
+            };
+
             window.onload = function(){
                 const currentValueElem = document.getElementById("currentDutyRate");
                 const inputElem = document.getElementById("dutyRate");
@@ -268,7 +276,10 @@
                         <p>速度変更</p>
                         <span id="currentDutyRate">80</span>
                         <br>
-                        <input type="range" id="dutyRate" min="0" max="100" step="10" value="80">
+                        <input type="range" id="dutyRate" min="0" max="100" step="10" value="50">
+                        <br>
+                        <br>
+                        <input type="button" value="画像保存" onclick="imageSave()"/>
                     </td>
                     <td style="width:1270px">
                         <img id="screen" src="http://192.168.137.23:8081/?action=stream" width="60%" style="
@@ -285,10 +296,10 @@
                         <span id="selectedResolution">{{ currentResolution }}</span>
                         <form name="resolution">
                             <select name="resolution">
-                                <option value="1280x720" selected>1280x720</option>
+                                <option value="1280x720">1280x720</option>
                                 <option value="640x480">640x480</option>
                                 <option value="480x270">480x270</option>
-                                <option value="240x135">240x135</option>
+                                <option value="240x135" selected>240x135</option>
                             </select>
                         </form>
                         <input type="button" value="解像度変更" onclick="resolutionChange()"/>
@@ -297,9 +308,9 @@
                         <span id="selectedFPS">{{ currentFPS }}</span>
                         <form name="fps">
                             <select name="fps">
-                                <option value="30" selected>30fps</option>
+                                <option value="30">30fps</option>
                                 <option value="20">20fps</option>
-                                <option value="15">15fps</option>
+                                <option value="15" selected>15fps</option>
                                 <option value="10">10fps</option>
                                 <option value="5">5fps</option>
                             </select>
